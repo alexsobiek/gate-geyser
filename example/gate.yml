@@ -1,0 +1,10 @@
+config:
+  bind: 0.0.0.0:25565
+  onlineMode: true
+  servers:
+    server1: 172.30.1.4:25565
+  try:
+    - server1
+  forwarding:
+    mode: velocity
+    velocitySecret: "secret"
