@@ -24,7 +24,7 @@ func main() {
 2. Configure Geyser:
    - Set `remote.address` and `remote.port` to your Gate instance
    - Set `use-proxy-protocol` to true
-3. Optionally setup (floodgate)[https://geysermc.org/download/?project=floodgate] (highly recommended!)
+3. Optionally setup [floodgate](https://geysermc.org/download/?project=floodgate) (highly recommended!)
    - Download floodgate on all of your backend servers
    - Use one key.pem for all (generate it on the first server, copy to all others)
    - Copy key.pem to your Geyser standalone
