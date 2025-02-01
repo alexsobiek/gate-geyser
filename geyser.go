@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/go-logr/logr"
-	"github.com/pires/go-proxyproto"
 	"github.com/robinbraemer/event"
 	"github.com/yl2chen/cidranger"
 	"go.minekube.com/gate/pkg/edition/java/proxy"
@@ -23,7 +22,7 @@ func Plugin(nameFormat string, trustedProxies []string) proxy.Plugin {
 				proxy:          p,
 				trustedProxies: cidranger.NewPCTrieRanger(),
 				nameFormat:     nameFormat,
-				connections:    make(map[net.Addr]*proxyproto.Conn),
+				connections:    make(map[net.Addr]*Conn),
 			}
 
 			for _, trustedProxy := range trustedProxies {
@@ -45,7 +44,7 @@ type GateGeyserPlugin struct {
 	proxy          *proxy.Proxy
 	trustedProxies cidranger.Ranger
 	nameFormat     string
-	connections    map[net.Addr]*proxyproto.Conn
+	connections    map[net.Addr]*Conn
 	mu             sync.RWMutex
 }
 

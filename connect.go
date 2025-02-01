@@ -39,8 +39,8 @@ func (p *GateGeyserPlugin) isGeyserConnection(addr net.Addr) bool {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 
-	for _, ppConn := range p.connections {
-		if ppConn.RemoteAddr().String() == addr.String() {
+	for _, conn := range p.connections {
+		if conn.RemoteAddr().String() == addr.String() {
 			return true
 		}
 	}
@@ -58,21 +58,25 @@ func (p *GateGeyserPlugin) onConnection(e *proxy.ConnectionEvent) {
 
 	if p.isTrustedProxy(ip) {
 		// Use proxy protocol to get the real IP
+		var conn net.Conn = e.Connection()
+		if !p.proxy.Config().ProxyProtocol {
+			// Wrap the connection with the proxy protocol
+			fmt.Println("Proxy protocol not enabled, wrapping connection")
+			conn = proxyproto.NewConn(e.Connection())
+		}
 
-		ppConn := proxyproto.NewConn(e.Connection())
-
-		conn := &Conn{
-			Conn: ppConn,
+		c := &Conn{
+			Conn: conn,
 			cb: func() {
 				p.mu.Lock()
-				delete(p.connections, ppConn.RemoteAddr())
+				delete(p.connections, conn.RemoteAddr())
 				p.mu.Unlock()
 			},
 		}
 
-		e.SetConnection(conn)
+		e.SetConnection(c)
 		p.mu.Lock()
-		p.connections[conn.RemoteAddr()] = ppConn
+		p.connections[conn.RemoteAddr()] = c
 		p.mu.Unlock()
 		return
 	}
