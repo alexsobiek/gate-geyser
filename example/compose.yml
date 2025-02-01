@@ -37,11 +37,15 @@ services:
       TYPE: PAPER
       VERSION: 1.21.4
       PAPER_BUILD: 133
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
       EXTRA_ARGS: "--world-dir ./worlds/"
     volumes:
       - worlds:/worlds
       - ./server1/server.properties:/data/server.properties
       - ./server1/config:/data/config
+      - ./geyser/floodgate.yml:/data/plugins/floodgate/config.yml
+      - ./geyser/key.pem:/data/plugins/floodgate/key.pem
     networks:
       mc:
         ipv4_address: 172.30.1.4
