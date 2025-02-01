@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
 
@@ -32,6 +33,8 @@ func getSettings() *Settings {
 
 func main() {
 	settings := getSettings()
+	log.Println("Starting Gate with Geyser support")
+	log.Printf("Trusted Proxies: %v\n", settings.TrustedProxies)
 
 	proxy.Plugins = append(
 		proxy.Plugins,
