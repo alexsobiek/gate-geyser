@@ -61,7 +61,6 @@ func (p *GateGeyserPlugin) onConnection(e *proxy.ConnectionEvent) {
 		var conn net.Conn = e.Connection()
 		if !p.proxy.Config().ProxyProtocol {
 			// Wrap the connection with the proxy protocol
-			fmt.Println("Proxy protocol not enabled, wrapping connection")
 			conn = proxyproto.NewConn(e.Connection())
 		}
 
