@@ -10,4 +10,4 @@ FROM alpine:3.21
 
 COPY --from=build /bin/gate /bin/gate
 
-CMD ["/bin/gate"]
+CMD ["/bin/gate" "-c", "/etc/gate/config.yml"]
