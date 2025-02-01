@@ -29,3 +29,15 @@ func main() {
    - Use one key.pem for all (generate it on the first server, copy to all others)
    - Copy key.pem to your Geyser standalone
    - Set `remote.auth-type` to `floodgate` in your Geyser standalone's config
+
+# Docker
+Pre-made Gate proxy docker image w/geyser plugin is available. Use the `TRUSTED_PROXIES` environment variable to set
+the address ranges of your Geyser proxies in CIDR notation
+
+```sh
+docker run \
+	-e "TRUSTED_PROXIES=127.0.0.1/32,172.0.0.2/32" \
+	-v /path/to/config.yml:/etc/gate/config.yml \
+	-p 25565:25565 \
+	ghcr.io/alexsobiek/gate-geyser:<tag>
+```
