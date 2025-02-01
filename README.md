@@ -19,7 +19,7 @@ func main() {
 }
 ```
 
-# Running
+# Setup
 1. Grab a copy of the [Geyser Standalone Jar](https://geysermc.org/download/)
 2. Configure Geyser:
    - Set `remote.address` and `remote.port` to your Gate instance
