@@ -37,7 +37,7 @@ the address ranges of your Geyser proxies in CIDR notation
 ```sh
 docker run \
 	-e "TRUSTED_PROXIES=127.0.0.1/32,172.0.0.2/32" \
-	-v /path/to/config.yml:/etc/gate/config.yml \
+	-v /path/to/config.yaml:/gate/config.yaml \
 	-p 25565:25565 \
 	ghcr.io/alexsobiek/gate-geyser:<tag>
 ```
