@@ -5,9 +5,9 @@ This [Gate](https://gate.minekube.com/) plugin adds support for standalone [Geys
 
 ```go
 func main() {
-  # List of trusted proxies in CIDR notation
-  # Be careful! Proxies within this range will bypass
-  # Mojang's online authentication!
+  // List of trusted proxies in CIDR notation
+  // Be careful! Proxies within this range will bypass
+  // Mojang's online authentication!
   trustedProxies := []string{"172.30.1.3/32"}
 
 	proxy.Plugins = append(
