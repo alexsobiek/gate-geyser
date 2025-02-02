@@ -4,6 +4,8 @@ services:
     restart: unless-stopped
     working_dir: /gate/example
     command: [ "go", "run", "main.go", "-c", "gate.yml" ]
+    environment:
+      - GEYSER_LISTEN_ADDR=:25566
     volumes:
       - ../:/gate
     ports:
