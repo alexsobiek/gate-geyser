@@ -9,6 +9,20 @@ import (
 	"go.minekube.com/gate/pkg/util/uuid"
 )
 
+func (p *GateGeyserPlugin) getGeyserConnection(addr net.Addr) (*GeyserConnection, bool) {
+	// Check if the connection is in the map
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	for _, conn := range p.connections {
+		if conn.RemoteAddr().String() == addr.String() {
+			return conn, true
+		}
+	}
+
+	return nil, false
+}
+
 func (p *GateGeyserPlugin) isGeyserConnection(addr net.Addr) bool {
 	// Check if the connection is in the map
 	p.mu.RLock()
@@ -25,18 +39,23 @@ func (p *GateGeyserPlugin) isGeyserConnection(addr net.Addr) bool {
 
 func (p *GateGeyserPlugin) onPreLogin(e *proxy.PreLoginEvent) {
 	// Check if the connection is in the map
-	if p.isGeyserConnection(e.Conn().RemoteAddr()) {
+	_, ok := p.getGeyserConnection(e.Conn().RemoteAddr())
+
+	if ok {
 		e.ForceOfflineMode()
 	}
 }
 
 func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
-	if p.isGeyserConnection(e.Conn().RemoteAddr()) {
 
+	conn, ok := p.getGeyserConnection(e.Conn().RemoteAddr())
+
+	if ok {
 		xuid, err := GetXuid(e.GameProfile().Name)
 
 		if err != nil {
-			p.log.Error(err, "Failed to get XUID for game profile")
+			p.log.Info("Disconnecting player", "reason", "Failed to get XUID for game profile", "username", e.GameProfile().Name, "error", err)
+			conn.Close()
 			return
 		}
 
@@ -54,7 +73,8 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 			uuid, err := xuid.Uuid()
 
 			if err != nil {
-				p.log.Error(err, "Failed to parse UUID from XUID")
+				p.log.Info("Disconnecting player", "reason", "Failed to get UUID for game profile", "username", e.GameProfile().Name, "error", err)
+				conn.Close()
 				return
 			}
 
@@ -64,4 +84,5 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 			})
 		}
 	}
+
 }
