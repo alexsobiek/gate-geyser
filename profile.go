@@ -74,6 +74,25 @@ func GetLinkedAccount(xuid int64) (*LinkedAccountResult, error) {
 	return &result, nil
 }
 
+type SkinResult struct {
+	Hash      string `json:"hash"`
+	Steve     bool   `json:"is_steve"`
+	Signature string `json:"signature"`
+	TextureID string `json:"texture_id"`
+	Value     string `json:"value"`
+}
+
+func GetSkin(xuid int64) (*SkinResult, error) {
+	var result SkinResult
+	err := geyserApiGet("skin/"+strconv.FormatInt(xuid, 10), &result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 func geyserApiGet(url string, result interface{}) error {
 
 	client := &http.Client{}

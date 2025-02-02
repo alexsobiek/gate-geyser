@@ -59,14 +59,24 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 			return
 		}
 
+		gameProfile := profile.GameProfile{}
+
+		skin, err := GetSkin(xuid.Xuid)
+		
+		if err == nil && skin != nil {
+			gameProfile.Properties = append(gameProfile.Properties, profile.Property{
+				Name:      "textures",
+				Value:     skin.Value,
+				Signature: skin.Signature,
+			})
+		}
+
 		linkedAccount, err := GetLinkedAccount(xuid.Xuid)
 
 		if linkedAccount != nil && linkedAccount.JavaID != uuid.Nil {
 			p.log.Info("Bedrock player logged in as Java player", "bedrock", e.GameProfile().Name, "java", linkedAccount.JavaName)
-			e.SetGameProfile(profile.GameProfile{
-				ID:   linkedAccount.JavaID,
-				Name: linkedAccount.JavaName,
-			})
+			gameProfile.ID = linkedAccount.JavaID
+			gameProfile.Name = linkedAccount.JavaName
 		} else {
 			p.log.Info("Bedrock player logged in", "username", e.GameProfile().Name)
 
@@ -78,11 +88,10 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 				return
 			}
 
-			e.SetGameProfile(profile.GameProfile{
-				ID:   uuid,
-				Name: fmt.Sprintf(p.nameFormat, e.GameProfile().Name),
-			})
+			gameProfile.ID = uuid
+			gameProfile.Name = fmt.Sprintf(p.nameFormat, e.GameProfile().Name)
 		}
-	}
 
+		e.SetGameProfile(gameProfile)
+	}
 }
