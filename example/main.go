@@ -9,7 +9,7 @@ import (
 func main() {
 	proxy.Plugins = append(
 		proxy.Plugins,
-		gategeyser.Plugin(".%s", []string{"172.30.1.3/32"}),
+		gategeyser.Plugin(".%s", ":25566"),
 	)
 
 	gate.Execute()

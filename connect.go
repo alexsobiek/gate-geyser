@@ -3,36 +3,11 @@ package gategeyser
 import (
 	"fmt"
 	"net"
-	"strings"
 
-	"github.com/pires/go-proxyproto"
 	"go.minekube.com/gate/pkg/edition/java/profile"
 	"go.minekube.com/gate/pkg/edition/java/proxy"
 	"go.minekube.com/gate/pkg/util/uuid"
 )
-
-type Conn struct {
-	net.Conn
-	cb func()
-}
-
-func (c *Conn) Close() error {
-	c.cb()
-	return c.Conn.Close()
-}
-
-func parseIP(ip string) (net.IP, error) {
-	if strings.Contains(ip, ":") {
-		var err error
-		ip, _, err = net.SplitHostPort(ip)
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return net.ParseIP(ip), nil
-}
 
 func (p *GateGeyserPlugin) isGeyserConnection(addr net.Addr) bool {
 	// Check if the connection is in the map
@@ -46,39 +21,6 @@ func (p *GateGeyserPlugin) isGeyserConnection(addr net.Addr) bool {
 	}
 
 	return false
-}
-
-func (p *GateGeyserPlugin) onConnection(e *proxy.ConnectionEvent) {
-	ip, err := parseIP(e.Connection().RemoteAddr().String())
-
-	if err != nil {
-		e.Connection().Close()
-		panic(fmt.Errorf("Failed to handle connection event: %w", err))
-	}
-
-	if p.isTrustedProxy(ip) {
-		// Use proxy protocol to get the real IP
-		var conn net.Conn = e.Connection()
-		if !p.proxy.Config().ProxyProtocol {
-			// Wrap the connection with the proxy protocol
-			conn = proxyproto.NewConn(e.Connection())
-		}
-
-		c := &Conn{
-			Conn: conn,
-			cb: func() {
-				p.mu.Lock()
-				delete(p.connections, conn.RemoteAddr())
-				p.mu.Unlock()
-			},
-		}
-
-		e.SetConnection(c)
-		p.mu.Lock()
-		p.connections[conn.RemoteAddr()] = c
-		p.mu.Unlock()
-		return
-	}
 }
 
 func (p *GateGeyserPlugin) onPreLogin(e *proxy.PreLoginEvent) {
