@@ -5,14 +5,19 @@ This [Gate](https://gate.minekube.com/) plugin adds support for standalone [Geys
 
 ```go
 func main() {
-  // List of trusted proxies in CIDR notation
-  // Be careful! Proxies within this range will bypass
-  // Mojang's online authentication!
-  trustedProxies := []string{"172.30.1.3/32"}
+  // Format for changing Bedrock usernames
+  // to prevent conflicts with Java usernames
+  usernameFormat := ".%s"
+  // Listener address for Geyser to connect to
+  // WARNING: You must configure a firewall to
+  // only allow geyser to connect to this address
+  // Non-geyser connections will bypass Mojang
+  // authentication
+  listenAddr := ":25566"
 
 	proxy.Plugins = append(
 		proxy.Plugins,
-		gategeyser.Plugin(".%s", settings.TrustedProxies),
+		gategeyser.Plugin(usernameFormat, listenAddr),
 	)
 
 	gate.Execute()
@@ -31,13 +36,14 @@ func main() {
    - Set `remote.auth-type` to `floodgate` in your Geyser standalone's config
 
 # Docker
-Pre-made Gate proxy docker image w/geyser plugin is available. Use the `TRUSTED_PROXIES` environment variable to set
-the address ranges of your Geyser proxies in CIDR notation
+A pre-made Gate proxy docker image w/geyser plugin is available. Use the `GEYSER_LISTEN_ADDR` environment variable to set
+the address for the listener which Geyser Standalone will connect to. WARNING: You must properly configure a firewall
+to prevent non-Geyser connections on this listener. Any other connections will result in a Mojang authentication bypass.
 
 ```sh
 docker run \
-	-e "TRUSTED_PROXIES=127.0.0.1/32,172.0.0.2/32" \
+	-e "GEYSER_LISTEN_ADDR=:25566" \
 	-v /path/to/config.yaml:/gate/config.yaml \
 	-p 25565:25565 \
-	ghcr.io/alexsobiek/gate-geyser:<tag>
+	ghcr.io/alexsobiek/gate-geyser:main
 ```
