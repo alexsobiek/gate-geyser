@@ -34,9 +34,17 @@ func ReadBedrockData(data string) (*BedrockData, error) {
 	version := parts[0]
 	username := parts[1]
 
+	if username == "" {
+		return nil, errors.New("invalid username")
+	}
+
 	xuid, err := strconv.ParseInt(parts[2], 10, 64)
 	if err != nil {
 		return nil, err
+	}
+
+	if xuid == 0 {
+		return nil, errors.New("invalid xuid")
 	}
 
 	deviceOS, err := strconv.Atoi(parts[3])

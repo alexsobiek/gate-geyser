@@ -63,7 +63,7 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 	if ok {
 		uid, err := conn.BedrockData.JavaUuid()
 
-		if err != nil {
+		if err != nil || uid == uuid.Nil {
 			p.log.Info("Disconnecting player", "reason", "Failed to get UUID from XUID for game profile", "error", err)
 			conn.Close()
 			return

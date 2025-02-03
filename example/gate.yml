@@ -2,7 +2,7 @@ config:
   bind: 0.0.0.0:25565
   onlineMode: true
   servers:
-    server1: server1:25565
+    server1: 10.5.104.253:25595
   try:
     - server1
   forwarding:
