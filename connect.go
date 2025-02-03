@@ -61,6 +61,13 @@ func (p *GateGeyserPlugin) onGameProfile(e *proxy.GameProfileRequestEvent) {
 	conn, ok := p.getGeyserConnection(e.Conn().RemoteAddr())
 
 	if ok {
+
+		if conn.BedrockData == nil {
+			p.log.Info("Disconnecting player", "reason", "Missing bedrock data")
+			conn.Close()
+			return
+		}
+
 		uid, err := conn.BedrockData.JavaUuid()
 
 		if err != nil || uid == uuid.Nil {
