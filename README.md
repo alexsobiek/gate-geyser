@@ -44,6 +44,7 @@ to prevent non-Geyser connections on this listener. Any other connections will r
 docker run \
 	-e "GEYSER_LISTEN_ADDR=:25566" \
 	-v /path/to/config.yaml:/gate/config.yaml \
+   -v /path/to/floodgate/key.pem:/gate/floodgate.pem \
 	-p 25565:25565 \
 	ghcr.io/alexsobiek/gate-geyser:main
 ```

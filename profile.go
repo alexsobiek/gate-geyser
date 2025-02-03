@@ -11,28 +11,6 @@ import (
 
 const API_URL = "https://api.geysermc.org/v2/"
 
-type GamertagXuidResult struct {
-	Xuid int64 `json:"xuid"`
-}
-
-func (g *GamertagXuidResult) Uuid() (uuid.UUID, error) {
-	xuid16 := strconv.FormatInt(g.Xuid, 16)
-
-	return uuid.Parse(fmt.Sprintf("00000000-0000-0000-000%s-%s", xuid16[0:1], xuid16[1:]))
-}
-
-func GetXuid(gamertag string) (*GamertagXuidResult, error) {
-
-	var result GamertagXuidResult
-	err := geyserApiGet("xbox/xuid/"+gamertag, &result)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &result, nil
-}
-
 type LinkedAccountResult struct {
 	BedrockID      int64     `json:"bedrock_id"`
 	JavaID         uuid.UUID `json:"java_id"`

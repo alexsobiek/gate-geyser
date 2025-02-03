@@ -3,22 +3,38 @@ package gategeyser
 import (
 	"context"
 	"net"
+	"os"
 	"sync"
 
+	"github.com/alexsobiek/gate-geyser/floodgate"
 	"github.com/go-logr/logr"
 	"github.com/robinbraemer/event"
 	"go.minekube.com/gate/pkg/edition/java/proxy"
 )
 
-func Plugin(nameFormat string, addr string) proxy.Plugin {
+func Plugin(nameFormat string, addr string, floodgateKeyPath string) proxy.Plugin {
 	return proxy.Plugin{
 		Name: "GateGeyserPlugin",
 		Init: func(ctx context.Context, p *proxy.Proxy) error {
+
+			// read floodgate key to byte array
+			keyBytes, err := os.ReadFile(floodgateKeyPath)
+			if err != nil {
+				return err
+			}
+
+			fg, err := floodgate.NewFloodgate(keyBytes)
+
+			if err != nil {
+				return err
+			}
+
 			pl := &GateGeyserPlugin{
 				ctx:         ctx,
 				log:         logr.FromContextOrDiscard(ctx),
 				proxy:       p,
 				nameFormat:  nameFormat,
+				floodgate:   fg,
 				connections: make(map[net.Addr]*GeyserConnection),
 			}
 
@@ -32,6 +48,7 @@ type GateGeyserPlugin struct {
 	log         logr.Logger
 	proxy       *proxy.Proxy
 	nameFormat  string
+	floodgate   *floodgate.Floodgate
 	connections map[net.Addr]*GeyserConnection
 	mu          sync.RWMutex
 }

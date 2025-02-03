@@ -8,6 +8,7 @@ services:
       - GEYSER_LISTEN_ADDR=:25566
     volumes:
       - ../:/gate
+      - ./geyser/key.pem:/etc/gate/floodgate.pem
     ports:
       - "25565:25565"
   geyser:

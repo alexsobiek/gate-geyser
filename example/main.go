@@ -9,7 +9,7 @@ import (
 func main() {
 	proxy.Plugins = append(
 		proxy.Plugins,
-		gategeyser.Plugin(".%s", ":25566"),
+		gategeyser.Plugin(".%s", ":25566", "/etc/gate/floodgate.pem"),
 	)
 
 	gate.Execute()

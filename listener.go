@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/alexsobiek/gate-geyser/floodgate"
 	"github.com/pires/go-proxyproto"
 	"go.minekube.com/gate/pkg/util/errs"
 )
 
 type GeyserConnection struct {
 	net.Conn
+	*floodgate.BedrockData
 	closeCb func()
 }
 

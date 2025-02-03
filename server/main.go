@@ -19,7 +19,11 @@ func getEnvOrDefault(key, defaultValue string) string {
 func main() {
 	proxy.Plugins = append(
 		proxy.Plugins,
-		gategeyser.Plugin(getEnvOrDefault("USERNAME_FORMAT", ".%s"), getEnvOrDefault("GEYSER_LISTEN_ADDR", "0.0.0.0:25566")),
+		gategeyser.Plugin(
+			getEnvOrDefault("USERNAME_FORMAT", ".%s"),
+			getEnvOrDefault("GEYSER_LISTEN_ADDR", "0.0.0.0:25566"),
+			getEnvOrDefault("FLOODGATE_KEY_PATH", "/gate/floodgate.pem"),
+		),
 	)
 
 	gate.Execute()
